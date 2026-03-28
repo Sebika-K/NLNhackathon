@@ -30,8 +30,7 @@ const bodyOptions = [
   'Limbs',
   'Joints',
 ];
-
-export default function FeelingsScreen() {
+export default function FeelingsScreen({ navigation }) {
   return (
     <LinearGradient
     colors={['#92ade7', '#EEF3FB', '#F5F5F5']}
@@ -85,7 +84,7 @@ export default function FeelingsScreen() {
         </View>
       </View>
 
-      <TouchableOpacity style={styles.doneButton}>
+      <TouchableOpacity style={styles.doneButton} onPress={() => navigation.navigate('Dream')}>
         <Text style={styles.doneButtonText}>Done</Text>
       </TouchableOpacity>
     </ScrollView>
