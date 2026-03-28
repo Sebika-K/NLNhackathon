@@ -126,5 +126,44 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 32,
   },
+  pillWrap: {
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  gap: 8,
+  justifyContent: 'center',
+},
+
+pill: {
+  borderWidth: 1,
+  borderColor: '#2D7A63',
+  borderRadius: 999,
+  paddingVertical: 12,
+  paddingHorizontal: 16,
+  backgroundColor: '#FFFFFF',
+},
+
+selectedPill: {
+  backgroundColor: '#BED3CC',
+},
+
+pillText: {
+  fontSize: 14,
+  color: '#334A7D',
+},
+
+doneButton: {
+  marginTop: 4,
+  width: '100%',
+  backgroundColor: '#7C99D4',
+  paddingVertical: 18,
+  borderRadius: 999,
+  alignItems: 'center',
+},
+
+doneButtonText: {
+  fontSize: 22,
+  fontWeight: '700',
+  color: '#334A7D',
+},
   
 });
