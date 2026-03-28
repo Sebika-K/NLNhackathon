@@ -50,7 +50,7 @@ export default function SapanaScreen({ navigation }) {
                     key={index}
                     style={[
                     styles.pill,
-                    item === '📖 Padhna' && styles.selectedPill,
+                    item === '💃 Nach' && styles.selectedPill,
                     ]}
                     onPress={() =>
                         navigation.navigate('Suggestion', { selectedDream: item })

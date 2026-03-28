@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './screens/HomeScreen';
 import FeelingsScreen from './screens/FeelingsScreen';
 import SapanaScreen from './screens/SapanaScreen';
+import SuggestionScreen from './screens/SuggestionScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -15,6 +16,8 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Feelings" component={FeelingsScreen} />
         <Stack.Screen name="Sapana" component={SapanaScreen} />
+        <Stack.Screen name="Suggestion" component={SuggestionScreen} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
