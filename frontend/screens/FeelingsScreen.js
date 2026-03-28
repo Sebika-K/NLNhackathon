@@ -84,7 +84,7 @@ export default function FeelingsScreen({ navigation }) {
         </View>
       </View>
 
-      <TouchableOpacity style={styles.doneButton} onPress={() => navigation.navigate('Dream')}>
+      <TouchableOpacity style={styles.doneButton} onPress={() => navigation.navigate('Sapana')}>
         <Text style={styles.doneButtonText}>Done</Text>
       </TouchableOpacity>
     </ScrollView>
