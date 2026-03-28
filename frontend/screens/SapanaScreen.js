@@ -25,7 +25,7 @@ const options = [
   '🤝 Samaj Seva',
 ];
 
-export default function SapanaScreen() {
+export default function SapanaScreen({ navigation }) {
   return (
      <LinearGradient
         colors={['#92ade7', '#EEF3FB', '#F5F5F5']}
@@ -52,6 +52,9 @@ export default function SapanaScreen() {
                     styles.pill,
                     item === '📖 Padhna' && styles.selectedPill,
                     ]}
+                    onPress={() =>
+                        navigation.navigate('Suggestion', { selectedDream: item })
+                    }
                 >
                     <Text style={styles.pillText}>{item}</Text>
                 </TouchableOpacity>
@@ -66,7 +69,7 @@ export default function SapanaScreen() {
                 multiline
             />
 
-            <TouchableOpacity style={styles.primaryButton}>
+            <TouchableOpacity style={styles.primaryButton} onPress={() => navigation.navigate('Suggestion')}>
                 <Text style={styles.primaryText}>Tell your DIDI</Text>
             </TouchableOpacity>
 
