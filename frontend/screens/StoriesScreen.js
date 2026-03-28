@@ -48,7 +48,7 @@ const stories = [
   },
 ];
 
-export default function StoriesScreen() {
+export default function StoriesScreen({ navigation }) {
   const [activeTab, setActiveTab] = useState('read');
   const [anonymous, setAnonymous] = useState(false);
   return (
@@ -154,7 +154,25 @@ export default function StoriesScreen() {
                         <Text style={styles.storyTitle}>{story.title}</Text>
                         <Text style={styles.storyDescription}>{story.description}</Text>
 
-                        <TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() =>
+                            navigation.navigate('StoryDetail', {
+                              story: {
+                                category: 'HER KATHA',
+                                title: story.title,
+                                tags: story.tags,
+                                paragraphs: [
+                                  story.description,
+                                  'One Tuesday morning, instead of lowering her eyes, she chose to speak clearly about her wishes.',
+                                  'Through small acts of courage, the household slowly softened.',
+                                ],
+                                ending:
+                                  'Now, hope lives quietly in her everyday life. She is no longer silent.',
+                              },
+                            })
+                           }
+                        >
+
                         <Text style={styles.storyLink}>Read her story →</Text>
                         </TouchableOpacity>
                     </View>
