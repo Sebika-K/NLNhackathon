@@ -1,7 +1,8 @@
+import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-export default function App() {
+export default function HomeScreen({ navigation })  {
   return (
     <LinearGradient
       colors={['#92ade7', '#EEF3FB', '#F5F5F5']}
@@ -12,7 +13,7 @@ export default function App() {
 
       {/* Image */}
       <Image
-        source={require('./assets/didi_logo.png')} 
+        source={require('../assets/didi_logo.png')} 
         style={styles.image}
       />
       {/* Heading */}
@@ -22,7 +23,10 @@ export default function App() {
         Welcome to your safe space. How can I guide you today?
       </Text>
       {/* Buttons */}
-      <TouchableOpacity style={styles.lightButton}>
+      <TouchableOpacity
+        style={styles.lightButton}
+        onPress={() => navigation.navigate('Feelings')}
+      >
         <Text style={styles.lightButtonText}>I am here for myself</Text>
       </TouchableOpacity>
 
@@ -80,7 +84,6 @@ const styles = StyleSheet.create({
     height: 56,   
     justifyContent: 'center',
     alignItems: 'center',
-    alignItems: 'center',
     marginBottom: 12,
   },
 
@@ -93,13 +96,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#0D2B45',
     paddingVertical: 16,
     paddingHorizontal: 20,
-    borderRadius: 25,
     width: '90%',
     height: 60,
     borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
-    alignItems: 'center',
   },
 
   darkButtonText: {
@@ -123,13 +124,12 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 6,
-    aelevation: 2,
+    elevation: 2,
   },
 
   quoteText: {
     fontSize: 14,
     color: '#5A7F6F',
-    textAlign: 'center',
     textAlign: 'center',
     lineHeight: 22,
   },
