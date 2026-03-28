@@ -1,4 +1,5 @@
 import React from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
 import {
   ScrollView,
   View,
@@ -32,6 +33,12 @@ const bodyOptions = [
 
 export default function FeelingsScreen() {
   return (
+    <LinearGradient
+    colors={['#92ade7', '#EEF3FB', '#F5F5F5']}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 1 }}
+    style={{ flex: 1 }}
+  >
     <ScrollView contentContainerStyle={styles.container}>
       <Image
         source={require('../assets/didi_logo.png')}
@@ -82,6 +89,9 @@ export default function FeelingsScreen() {
         <Text style={styles.doneButtonText}>Done</Text>
       </TouchableOpacity>
     </ScrollView>
+
+  </LinearGradient>
+    
   );
 }
 
@@ -90,7 +100,6 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 40,
     paddingHorizontal: 24,
-    backgroundColor: '#F6F5F3',
     alignItems: 'center',
   },
 
