@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
 export default function App() {
   return (
@@ -16,6 +16,16 @@ export default function App() {
       <Text style={styles.subtext}>
         Welcome to your safe space. How can I guide you today?
       </Text>
+
+      <TouchableOpacity style={styles.lightButton}>
+        <Text style={styles.lightButtonText}>I am here for myself</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.darkButton}>
+        <Text style={styles.darkButtonText}>
+          I want to understand someone I love
+        </Text>
+      </TouchableOpacity>
 
     </View>
   );
@@ -55,5 +65,33 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#4A7C6F',
     marginBottom: 25,
+  },
+  lightButton: {
+    backgroundColor: '#DADFE8',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    width: '90%',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+
+  lightButtonText: {
+    fontSize: 16,
+  },
+
+  darkButton: {
+    backgroundColor: '#0D2B45',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    width: '90%',
+    alignItems: 'center',
+  },
+
+  darkButtonText: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
