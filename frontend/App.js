@@ -27,6 +27,12 @@ export default function App() {
         </Text>
       </TouchableOpacity>
 
+      <View style={styles.quoteBox}>
+        <Text style={styles.quoteText}>
+          "It's okay to take it slow. I'm with you every step of the way."
+        </Text>
+      </View>
+
     </View>
   );
 }
@@ -92,6 +98,18 @@ const styles = StyleSheet.create({
   darkButtonText: {
     color: 'white',
     fontSize: 16,
+    textAlign: 'center',
+  },
+  quoteBox: {
+    marginTop: 25,
+    backgroundColor: '#E8E8E8',
+    padding: 15,
+    borderRadius: 15,
+  },
+
+  quoteText: {
+    fontSize: 13,
+    color: '#5A7F6F',
     textAlign: 'center',
   },
 });
