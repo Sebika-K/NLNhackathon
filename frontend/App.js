@@ -3,13 +3,10 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 export default function App() {
   return (
     <View style={styles.container}>
-      
-      {/* Title */}
-      <Text style={styles.logo}>DIDI</Text>
 
       {/* Image */}
       <Image
-        source={require('./assets/icon.png')} 
+        source={require('./assets/didi_logo.png')} 
         style={styles.image}
       />
       {/* Heading */}
@@ -44,33 +41,28 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F4F4F4',
     alignItems: 'center',
-    padding: 20,
+    padding: 25,
     justifyContent: 'center',
   },
 
-  logo: {
-    fontSize: 28,
-    marginBottom: 10,
-    color: '#2F4F3E',
-  },
-
   image: {
-    width: 200,
-    height: 200,
-    marginBottom: 20,
+    width: 232,
+    height: 260,
+    marginTop: -20,
+    marginBottom: 10,
   },
 
   heading: {
-    fontSize: 24,
-    fontWeight: '600',
+    fontSize: 36,
+    fontWeight: '700',
     textAlign: 'center',
-    marginBottom: 10,
+    marginBottom: 20,
     color: '#2D3A5A',
   },
 
   subtext: {
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: 16,
     color: '#4A7C6F',
     marginBottom: 25,
   },
@@ -78,14 +70,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#DADFE8',
     paddingVertical: 14,
     paddingHorizontal: 20,
-    borderRadius: 25,
+    borderRadius: 30,
     width: '90%',
+    height: 56,   
+    justifyContent: 'center',
+    alignItems: 'center',
     alignItems: 'center',
     marginBottom: 12,
   },
 
   lightButtonText: {
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: '500',
   },
 
   darkButton: {
@@ -94,6 +90,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 25,
     width: '90%',
+    height: 60,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
     alignItems: 'center',
   },
 
@@ -103,15 +103,29 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   quoteBox: {
-    marginTop: 25,
-    backgroundColor: '#E8E8E8',
-    padding: 15,
-    borderRadius: 15,
+    marginTop: 30,
+    width: 338,
+    minHeight: 90,
+    backgroundColor: '#E9E9E9',
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 18,
+    borderWidth: 1,
+    borderColor: '#DADADA',
+    justifyContent: 'center',
+
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 2,
   },
 
   quoteText: {
-    fontSize: 13,
+    fontSize: 14,
     color: '#5A7F6F',
     textAlign: 'center',
+    textAlign: 'center',
+    lineHeight: 22,
   },
 });
