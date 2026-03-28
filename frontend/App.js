@@ -7,6 +7,7 @@ import FeelingsScreen from './screens/FeelingsScreen';
 import SapanaScreen from './screens/SapanaScreen';
 import SuggestionScreen from './screens/SuggestionScreen';
 import StoriesScreen from './screens/StoriesScreen';
+import StoryDetailScreen from './screens/StoryDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,6 +20,8 @@ export default function App() {
         <Stack.Screen name="Sapana" component={SapanaScreen} />
         <Stack.Screen name="Suggestion" component={SuggestionScreen} />
         <Stack.Screen name="Stories" component={StoriesScreen} />
+        <Stack.Screen name="StoryDetail" component={StoryDetailScreen} />
+        
 
       </Stack.Navigator>
     </NavigationContainer>
