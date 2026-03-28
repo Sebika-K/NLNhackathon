@@ -1,8 +1,14 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function App() {
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={['#92ade7', '#EEF3FB', '#F5F5F5']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}
+    >
 
       {/* Image */}
       <Image
@@ -32,14 +38,13 @@ export default function App() {
         </Text>
       </View>
 
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F4F4',
     alignItems: 'center',
     padding: 25,
     justifyContent: 'center',
