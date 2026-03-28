@@ -162,7 +162,7 @@ pillText: {
 doneButton: {
   marginTop: 4,
   width: '100%',
-  backgroundColor: '#7C99D4',
+  backgroundColor: '#7896CD',
   paddingVertical: 18,
   borderRadius: 999,
   alignItems: 'center',
@@ -171,7 +171,7 @@ doneButton: {
 doneButtonText: {
   fontSize: 22,
   fontWeight: '700',
-  color: '#334A7D',
+  color: 'white',
 },
   
 });

@@ -1,4 +1,5 @@
 import React from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
 import {
   ScrollView,
   View,
@@ -26,45 +27,55 @@ const options = [
 
 export default function SapanaScreen() {
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Image
-        source={require('../assets/didi_logo.png')}
-        style={styles.image}
-      />
+     <LinearGradient
+        colors={['#92ade7', '#EEF3FB', '#F5F5F5']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{ flex: 1 }}
+      >
+        <ScrollView contentContainerStyle={styles.container}>
+            <Image
+                source={require('../assets/didi_logo.png')}
+                style={styles.image}
+            />
 
-      <Text style={styles.title}>Sapana Space</Text>
-      <Text style={styles.subtitle}>Yo ठाँउ तिम्रो मात्र हो।</Text>
+            <Text style={styles.title}>Sapana Space</Text>
+            <Text style={styles.subtitle}>Yo ठाँउ तिम्रो मात्र हो।</Text>
 
-      <Text style={styles.sectionTitle}>WHAT IS YOUR SAPANA?</Text>
+            <Text style={styles.sectionTitle}>WHAT IS YOUR SAPANA?</Text>
 
-      <View style={styles.pillWrap}>
-        {options.map((item, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[
-              styles.pill,
-              item === '📖 Padhna' && styles.selectedPill,
-            ]}
-          >
-            <Text style={styles.pillText}>{item}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+            <View style={styles.pillWrap}>
+                {options.map((item, index) => (
+                <TouchableOpacity
+                    key={index}
+                    style={[
+                    styles.pill,
+                    item === '📖 Padhna' && styles.selectedPill,
+                    ]}
+                >
+                    <Text style={styles.pillText}>{item}</Text>
+                </TouchableOpacity>
+                ))}
+            </View>
 
-      <Text style={styles.sectionTitle}>Besides those above</Text>
+            <Text style={styles.sectionTitle}>Besides those above</Text>
 
-      <TextInput
-        placeholder="Write your heart out..."
-        style={styles.textBox}
-        multiline
-      />
+            <TextInput
+                placeholder="Write your heart out..."
+                style={styles.textBox}
+                multiline
+            />
 
-      <TouchableOpacity style={styles.primaryButton}>
-        <Text style={styles.primaryText}>Tell your DIDI</Text>
-      </TouchableOpacity>
+            <TouchableOpacity style={styles.primaryButton}>
+                <Text style={styles.primaryText}>Tell your DIDI</Text>
+            </TouchableOpacity>
 
-      <Text style={styles.skip}>Maybe another time</Text>
-    </ScrollView>
+            <Text style={styles.skip}>Maybe another time</Text>
+        </ScrollView>
+
+
+      </LinearGradient>
+    
   );
 }
 
@@ -73,7 +84,6 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 40,
     paddingHorizontal: 24,
-    backgroundColor: '#F5F5F3',
     alignItems: 'center',
   },
   image: {
@@ -132,7 +142,7 @@ const styles = StyleSheet.create({
   },
   primaryButton: {
     width: '100%',
-    backgroundColor: '#2F4C7E',
+    backgroundColor: '#7896CD',
     paddingVertical: 18,
     borderRadius: 999,
     alignItems: 'center',

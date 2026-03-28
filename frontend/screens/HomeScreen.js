@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   },
 
   darkButton: {
-    backgroundColor: '#0D2B45',
+    backgroundColor: '#7896CD',
     paddingVertical: 16,
     paddingHorizontal: 20,
     width: '90%',
