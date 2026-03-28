@@ -82,6 +82,36 @@ export default function SuggestionScreen({ route }) {
       <Text style={styles.suggestionCategory}>{item.category}</Text>
     </View>
 
+    <Text style={styles.storyHeading}>Success Katha</Text>
+<Text style={styles.storySubheading}>
+  You are not alone in what you feel.
+</Text>
+
+{mockStories.map((story, index) => (
+  <View
+    key={story.id}
+    style={[
+      styles.storyCard,
+      index === 1 && styles.storyCardAccent,
+    ]}
+  >
+    <View style={styles.tagRow}>
+      {story.tags.map((tag) => (
+        <View key={tag} style={styles.tag}>
+          <Text style={styles.tagText}>{tag}</Text>
+        </View>
+      ))}
+    </View>
+
+    <Text style={styles.storyTitle}>{story.title}</Text>
+    <Text style={styles.storyDescription}>{story.description}</Text>
+
+    <TouchableOpacity>
+      <Text style={styles.storyLink}>Read her story →</Text>
+    </TouchableOpacity>
+  </View>
+))}
+
     <Text style={styles.arrow}>›</Text>
   </TouchableOpacity>
 ))}
@@ -190,5 +220,65 @@ suggestionCategory: {
 arrow: {
   fontSize: 26,
   color: '#6E7080',
+},
+storyHeading: {
+  marginTop: 8,
+  fontSize: 26,
+  fontWeight: '700',
+  color: '#004131',
+  textAlign: 'center',
+},
+storySubheading: {
+  marginTop: 8,
+  marginBottom: 22,
+  textAlign: 'center',
+  fontSize: 16,
+  color: '#7896CD',
+},
+storyCard: {
+  backgroundColor: '#F4F7FC',
+  borderRadius: 30,
+  padding: 22,
+  marginBottom: 22,
+},
+storyCardAccent: {
+  borderLeftWidth: 6,
+  borderLeftColor: '#183557',
+},
+tagRow: {
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  marginBottom: 14,
+},
+tag: {
+  backgroundColor: '#D8DEE9',
+  borderRadius: 10,
+  paddingHorizontal: 10,
+  paddingVertical: 4,
+  marginRight: 8,
+  marginBottom: 8,
+},
+tagText: {
+  fontSize: 10,
+  fontWeight: '700',
+  color: '#31496E',
+  letterSpacing: 0.5,
+},
+storyTitle: {
+  fontSize: 20,
+  fontWeight: '700',
+  color: '#132C4A',
+  marginBottom: 10,
+},
+storyDescription: {
+  fontSize: 16,
+  lineHeight: 24,
+  color: '#4B5663',
+  marginBottom: 18,
+},
+storyLink: {
+  fontSize: 18,
+  fontWeight: '700',
+  color: '#132C4A',
 },
 });
