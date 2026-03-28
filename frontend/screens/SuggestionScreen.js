@@ -70,6 +70,21 @@ export default function SuggestionScreen({ route }) {
       I noticed your dream about <Text style={styles.highlight}>{selectedDream}</Text> felt
       vibrant. Here is how we can bring that energy into your day.
     </Text>
+
+    {mockSuggestions.map((item) => (
+  <TouchableOpacity key={item.id} style={styles.suggestionCard}>
+    <View style={styles.heartCircle}>
+      <Text style={styles.heart}>♥</Text>
+    </View>
+
+    <View style={styles.suggestionTextWrap}>
+      <Text style={styles.suggestionTitle}>{item.title}</Text>
+      <Text style={styles.suggestionCategory}>{item.category}</Text>
+    </View>
+
+    <Text style={styles.arrow}>›</Text>
+  </TouchableOpacity>
+))}
   </ScrollView>
   );
 }
@@ -135,5 +150,45 @@ description: {
 },
 highlight: {
   color: '#8A97D1',
+},
+suggestionCard: {
+  borderWidth: 1,
+  borderColor: '#052138',
+  backgroundColor: '#F4F7FC',
+  borderRadius: 0,
+  padding: 16,
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginBottom: 16,
+},
+heartCircle: {
+  width: 44,
+  height: 44,
+  borderRadius: 22,
+  backgroundColor: '#F3E8E8',
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginRight: 14,
+},
+heart: {
+  color: '#132C4A',
+  fontSize: 20,
+},
+suggestionTextWrap: {
+  flex: 1,
+},
+suggestionTitle: {
+  fontSize: 18,
+  color: '#132C4A',
+  marginBottom: 2,
+},
+suggestionCategory: {
+  fontSize: 12,
+  color: '#9EAFE9',
+  letterSpacing: 0.8,
+},
+arrow: {
+  fontSize: 26,
+  color: '#6E7080',
 },
 });
