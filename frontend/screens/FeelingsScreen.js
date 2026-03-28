@@ -84,3 +84,47 @@ export default function FeelingsScreen() {
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    paddingTop: 60,
+    paddingBottom: 40,
+    paddingHorizontal: 24,
+    backgroundColor: '#F6F5F3',
+    alignItems: 'center',
+  },
+
+  image: {
+    width: 210,
+    height: 210,
+    resizeMode: 'contain',
+    marginBottom: 2,
+  },
+
+  heading: {
+    fontSize: 30,
+    fontWeight: '700',
+    textAlign: 'center',
+    color: '#334A7D',
+    lineHeight: 40,
+    marginBottom: 28,
+  },
+
+  card: {
+    width: '100%',
+    backgroundColor: '#EFF1F8',
+    borderRadius: 28,
+    padding: 24,
+    marginBottom: 26,
+  },
+
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#334A7D',
+    marginBottom: 18,
+    textAlign: 'center',
+    lineHeight: 32,
+  },
+  
+});
