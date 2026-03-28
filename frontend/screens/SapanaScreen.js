@@ -5,6 +5,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
+  TextInput,
   Image,
 } from 'react-native';
 
@@ -49,6 +50,20 @@ export default function SapanaScreen() {
           </TouchableOpacity>
         ))}
       </View>
+
+      <Text style={styles.sectionTitle}>Besides those above</Text>
+
+      <TextInput
+        placeholder="Write your heart out..."
+        style={styles.textBox}
+        multiline
+      />
+
+      <TouchableOpacity style={styles.primaryButton}>
+        <Text style={styles.primaryText}>Tell your DIDI</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.skip}>Maybe another time</Text>
     </ScrollView>
   );
 }
@@ -103,6 +118,33 @@ const styles = StyleSheet.create({
     backgroundColor: '#C7DAD4',
   },
   pillText: {
+    fontSize: 14,
+  },
+  textBox: {
+    width: '100%',
+    height: 120,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#2E6E5C',
+    padding: 16,
+    marginBottom: 20,
+    backgroundColor: '#fff',
+  },
+  primaryButton: {
+    width: '100%',
+    backgroundColor: '#2F4C7E',
+    paddingVertical: 18,
+    borderRadius: 999,
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  primaryText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  skip: {
+    color: '#888',
     fontSize: 14,
   },
 });
