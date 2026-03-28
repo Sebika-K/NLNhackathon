@@ -4,19 +4,21 @@ export default function App() {
   return (
     <View style={styles.container}>
       
+      {/* Title */}
       <Text style={styles.logo}>DIDI</Text>
 
+      {/* Image */}
       <Image
         source={require('./assets/icon.png')} 
         style={styles.image}
       />
-
+      {/* Heading */}
       <Text style={styles.heading}>Namaste, I'm here for you</Text>
-
+      {/* Subtext */}
       <Text style={styles.subtext}>
         Welcome to your safe space. How can I guide you today?
       </Text>
-
+      {/* Buttons */}
       <TouchableOpacity style={styles.lightButton}>
         <Text style={styles.lightButtonText}>I am here for myself</Text>
       </TouchableOpacity>
@@ -26,7 +28,7 @@ export default function App() {
           I want to understand someone I love
         </Text>
       </TouchableOpacity>
-
+      {/* Quote */}
       <View style={styles.quoteBox}>
         <Text style={styles.quoteText}>
           "It's okay to take it slow. I'm with you every step of the way."
