@@ -30,7 +30,10 @@ export default function HomeScreen({ navigation })  {
         <Text style={styles.lightButtonText}>I am here for myself</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.darkButton}>
+      <TouchableOpacity
+        style={styles.darkButton}
+        onPress={() => navigation.navigate('Community')}
+      >
         <Text style={styles.darkButtonText}>
           I want to understand someone I love
         </Text>
