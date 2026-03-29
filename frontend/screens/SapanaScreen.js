@@ -63,7 +63,7 @@ export default function SapanaScreen({ navigation, route }) {
       });
     } catch (err) {
       Alert.alert('Could not connect to DIDI server. Make sure backend is running.');
-      navigation.navigate('Suggestion', { selectedDream: dream, recommendation: null });
+      navigation.navigate('Suggestion', { selectedDream: dream, recommendation: null, emotions: feelingsData.emotions || [] });
     } finally {
       setLoading(false);
     }
