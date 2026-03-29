@@ -1,5 +1,6 @@
 import React from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
+import TopNav from '../components/TopNav';
 import {
   ScrollView,
   View,
@@ -57,19 +58,7 @@ export default function SuggestionScreen({ route }) {
         style={{ flex: 1 }}
         >
         <ScrollView contentContainerStyle={styles.container}>
-            <View style={styles.topRow}>
-                <View style={styles.brandRow}>
-                <Image
-                    source={require('../assets/didi_logo.png')}
-                    style={styles.brandImage}
-                />
-                <Text style={styles.brandText}>DIDI</Text>
-                </View>
-
-                <View style={styles.profileCircle}>
-                <Text style={styles.profileIcon}>◉</Text>
-                </View>
-            </View>
+            <TopNav />
 
             <Text style={styles.kicker}>PERSONALIZED FOR YOU</Text>
 
@@ -159,17 +148,18 @@ const styles = StyleSheet.create({
     color: '#004131',
   },
   profileCircle: {
-    width: 30,
-    height: 30,
+    width: 57,
+    height: 54,
     borderRadius: 15,
     borderWidth: 1.5,
-    borderColor: '#234F46',
+    borderColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
   },
   profileIcon: {
-    fontSize: 12,
-    color: '#234F46',
+    width: 23,
+    height: 23,
+    borderRadius: 18,
   },
   kicker: {
     fontSize: 12,
