@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
   ScrollView,
@@ -8,7 +8,10 @@ import {
   TouchableOpacity,
   TextInput,
   Image,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
+import { submitCheckin, getRecommendation } from '../services/api';
 
 const options = [
   '🎨 Kala',
@@ -25,60 +28,103 @@ const options = [
   '🤝 Samaj Seva',
 ];
 
-export default function SapanaScreen({ navigation }) {
+export default function SapanaScreen({ navigation, route }) {
+  const feelingsData = route?.params?.feelingsData || { mood_score: 3, emotions: [], pain_points: [] };
+
+  const [selectedHobby, setSelectedHobby] = useState(null);
+  const [customGoal, setCustomGoal] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (hobby) => {
+    const chosenHobby = hobby || selectedHobby;
+    const dream = customGoal || chosenHobby || '';
+    setLoading(true);
+    try {
+      await submitCheckin({
+        mood_score: feelingsData.mood_score,
+        pain_points: feelingsData.pain_points,
+        hobby: chosenHobby,
+        goal: customGoal,
+        category: chosenHobby ? 'hobby' : 'custom',
+      });
+
+      const recResult = await getRecommendation({
+        mood_score: feelingsData.mood_score,
+        dream_space: dream,
+      });
+
+      navigation.navigate('Suggestion', {
+        selectedDream: dream,
+        recommendation: recResult.recommendation || null,
+      });
+    } catch (err) {
+      Alert.alert('Could not connect to DIDI server. Make sure backend is running.');
+      navigation.navigate('Suggestion', { selectedDream: dream, recommendation: null });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-     <LinearGradient
-        colors={['#92ade7', '#EEF3FB', '#F5F5F5']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{ flex: 1 }}
-      >
-        <ScrollView contentContainerStyle={styles.container}>
-            <Image
-                source={require('../assets/didi_logo.png')}
-                style={styles.image}
-            />
+    <LinearGradient
+      colors={['#92ade7', '#EEF3FB', '#F5F5F5']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={{ flex: 1 }}
+    >
+      <ScrollView contentContainerStyle={styles.container}>
+        <Image
+          source={require('../assets/didi_logo.png')}
+          style={styles.image}
+        />
 
-            <Text style={styles.title}>Sapana Space</Text>
-            <Text style={styles.subtitle}>Yo ठाँउ तिम्रो मात्र हो।</Text>
+        <Text style={styles.title}>Sapana Space</Text>
+        <Text style={styles.subtitle}>Yo ठाँउ तिम्रो मात्र हो।</Text>
 
-            <Text style={styles.sectionTitle}>WHAT IS YOUR SAPANA?</Text>
+        <Text style={styles.sectionTitle}>WHAT IS YOUR SAPANA?</Text>
 
-            <View style={styles.pillWrap}>
-                {options.map((item, index) => (
-                <TouchableOpacity
-                    key={index}
-                    style={[
-                    styles.pill,
-                    item === '💃 Nach' && styles.selectedPill,
-                    ]}
-                    onPress={() =>
-                        navigation.navigate('Suggestion', { selectedDream: item })
-                    }
-                >
-                    <Text style={styles.pillText}>{item}</Text>
-                </TouchableOpacity>
-                ))}
-            </View>
-
-            <Text style={styles.sectionTitle}>Besides those above</Text>
-
-            <TextInput
-                placeholder="Write your heart out..."
-                style={styles.textBox}
-                multiline
-            />
-
-            <TouchableOpacity style={styles.primaryButton} onPress={() => navigation.navigate('Suggestion')}>
-                <Text style={styles.primaryText}>Tell your DIDI</Text>
+        <View style={styles.pillWrap}>
+          {options.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[
+                styles.pill,
+                selectedHobby === item && styles.selectedPill,
+              ]}
+              onPress={() => setSelectedHobby(item === selectedHobby ? null : item)}
+            >
+              <Text style={styles.pillText}>{item}</Text>
             </TouchableOpacity>
+          ))}
+        </View>
 
-            <Text style={styles.skip}>Maybe another time</Text>
-        </ScrollView>
+        <Text style={styles.sectionTitle}>Besides those above</Text>
 
+        <TextInput
+          placeholder="Write your heart out..."
+          style={styles.textBox}
+          multiline
+          value={customGoal}
+          onChangeText={setCustomGoal}
+        />
 
-      </LinearGradient>
-    
+        <TouchableOpacity
+          style={[styles.primaryButton, loading && { opacity: 0.7 }]}
+          onPress={() => handleSubmit(null)}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.primaryText}>Tell your DIDI</Text>
+          )}
+        </TouchableOpacity>
+
+        <Text style={styles.skip} onPress={() => navigation.navigate('Suggestion', { selectedDream: '' })}>
+          Maybe another time
+        </Text>
+      </ScrollView>
+    </LinearGradient>
   );
 }
 

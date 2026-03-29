@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import TopNav from '../components/TopNav';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
@@ -6,27 +6,77 @@ import {
   Text,
   ScrollView,
   StyleSheet,
-  Image,
   TouchableOpacity,
-} from 'react-native'; 
+  ActivityIndicator,
+} from 'react-native';
 
-import { weeklyMoods, weeklyActivities, helpfulStories } from '../data/mockData'; //these are mock up data
+import { helpfulStories } from '../data/mockData';
 import GradientBackground from '../components/Gradient';
+import { getDashboard } from '../services/api';
+
+const moodToEmoji = { 1: '😞', 2: '😰', 3: '🙂', 4: '😌', 5: '😄' };
+const DAY_LABELS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+
+function buildWeekTrail(checkins) {
+  const today = new Date();
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(today);
+    d.setDate(today.getDate() - (6 - i));
+    const dayLabel = DAY_LABELS[d.getDay()];
+    const dateStr = d.toISOString().slice(0, 10);
+    const match = checkins.find((c) => {
+      const cDate = new Date(c.checked_in_at || c.created_at);
+      return cDate.toISOString().slice(0, 10) === dateStr;
+    });
+    return { day: dayLabel, emoji: match ? moodToEmoji[match.mood_score] || null : null };
+  });
+}
+
+function buildObservation(checkins) {
+  if (!checkins || checkins.length === 0) return null;
+  const avg =
+    checkins.reduce((sum, c) => sum + (c.mood_score || 3), 0) / checkins.length;
+  if (avg >= 4) return '✦ You had a really good week. That matters.';
+  if (avg >= 3) return '✦ You had a balanced week. Keep going.';
+  return '✦ This week felt heavy. You showed up anyway — that matters.';
+}
 
 export default function ReviewScreen() {
+  const [checkins, setCheckins] = useState([]);
+  const [dreams, setDreams] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getDashboard()
+      .then((res) => {
+        if (res.success) {
+          setCheckins(res.data.checkins || []);
+          setDreams(res.data.dreams || []);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const weeklyMoods = buildWeekTrail(checkins);
+  const observation = buildObservation(checkins);
+  const weeklyActivities = dreams.map((d) => d.hobby || d.goal).filter(Boolean);
+
+  const today = new Date();
+  const weekStart = new Date(today);
+  weekStart.setDate(today.getDate() - 6);
+  const dateRange = `${weekStart.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} — ${today.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`;
+
   return (
     <GradientBackground>
-
       <View style={styles.container}>
-        {/* HEADER */}
         <TopNav />
 
         <ScrollView showsVerticalScrollIndicator={false}>
-          {/* WEEK REVIEW TITLE */}
           <View style={styles.section}>
             <View style={styles.titleRow}>
               <Text style={styles.weekTitle}>Week Review </Text>
-              <Text style={styles.dateRange}>March 24 — March 30</Text>
+              <Text style={styles.dateRange}>{dateRange}</Text>
             </View>
             <Text style={styles.subtitle}>
               Yo hapta timi kasari rahyo —{' '}
@@ -34,69 +84,70 @@ export default function ReviewScreen() {
             </Text>
           </View>
 
-          {/* MOOD TRAIL */}
-          <View style={styles.moodRow}>
-            {weeklyMoods.map((item, index) => (
-              <View key={index} style={styles.moodItem}>
-                {item.emoji ? (
-                  <View style={styles.moodCircleFilled}>
-                    <Text style={styles.moodEmoji}>{item.emoji}</Text>
-                  </View>
-                ) : (
-                  <View style={styles.moodCircleEmpty} />
-                )}
-                <Text style={styles.dayLabel}>{item.day}</Text>
-              </View>
-            ))}
-          </View>
-
-          {/* DIDI OBSERVATION */}
-          <View style={styles.observationCard}>
-            <Text style={styles.observationText}>
-              ✦ You had a lighter second half of the week.{' '}
-              <Text style={styles.bold}>That matters.</Text>
-            </Text>
-          </View>
-
-          {/* TIMRO KADAM */}
-          <View style={styles.section}>
-            <Text style={styles.sectionHeading}>Timro kadam</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={styles.chipsRow}>
-                {weeklyActivities.map((activity, index) => (
-                  <View key={index} style={styles.chip}>
-                    <Text style={styles.chipText}>{activity}</Text>
+          {loading ? (
+            <ActivityIndicator style={{ marginTop: 40 }} color="#7896CD" />
+          ) : (
+            <>
+              <View style={styles.moodRow}>
+                {weeklyMoods.map((item, index) => (
+                  <View key={index} style={styles.moodItem}>
+                    {item.emoji ? (
+                      <View style={styles.moodCircleFilled}>
+                        <Text style={styles.moodEmoji}>{item.emoji}</Text>
+                      </View>
+                    ) : (
+                      <View style={styles.moodCircleEmpty} />
+                    )}
+                    <Text style={styles.dayLabel}>{item.day}</Text>
                   </View>
                 ))}
               </View>
-            </ScrollView>
-          </View>
 
-          {/* HELPFUL STORIES */}
-          <View style={styles.section}>
-            <Text style={styles.sectionHeading}>Timilai helpful lageko katha</Text>
-            {helpfulStories.map((story, index) => (
-              <View key={index} style={styles.storyCard}>
-                <View style={styles.tagsRow}>
-                  {story.tags.map((tag, tagIndex) => (
-                    <View key={tagIndex} style={styles.tag}>
-                      <Text style={styles.tagText}>{tag}</Text>
-                    </View>
-                  ))}
+              {observation && (
+                <View style={styles.observationCard}>
+                  <Text style={styles.observationText}>{observation}</Text>
                 </View>
-                <Text style={styles.storyTitle}>{story.title}</Text>
-                <Text style={styles.storyPreview}>{story.preview}</Text>
-                <TouchableOpacity>
-                  <Text style={styles.readButton}>Read her story →</Text>
-                </TouchableOpacity>
+              )}
+
+              {weeklyActivities.length > 0 && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionHeading}>Timro kadam</Text>
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    <View style={styles.chipsRow}>
+                      {weeklyActivities.map((activity, index) => (
+                        <View key={index} style={styles.chip}>
+                          <Text style={styles.chipText}>{activity}</Text>
+                        </View>
+                      ))}
+                    </View>
+                  </ScrollView>
+                </View>
+              )}
+
+              <View style={styles.section}>
+                <Text style={styles.sectionHeading}>Timilai helpful lageko katha</Text>
+                {helpfulStories.map((story, index) => (
+                  <View key={index} style={styles.storyCard}>
+                    <View style={styles.tagsRow}>
+                      {story.tags.map((tag, tagIndex) => (
+                        <View key={tagIndex} style={styles.tag}>
+                          <Text style={styles.tagText}>{tag}</Text>
+                        </View>
+                      ))}
+                    </View>
+                    <Text style={styles.storyTitle}>{story.title}</Text>
+                    <Text style={styles.storyPreview}>{story.preview}</Text>
+                    <TouchableOpacity>
+                      <Text style={styles.readButton}>Read her story →</Text>
+                    </TouchableOpacity>
+                  </View>
+                ))}
               </View>
-            ))}
-          </View>
+            </>
+          )}
 
           <View style={{ height: 100 }} />
         </ScrollView>
-
-      
       </View>
     </GradientBackground>
   );
@@ -105,35 +156,6 @@ export default function ReviewScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //backgroundColor: '#FFFFFF',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 56,
-    paddingBottom: 12,
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-  },
-  headerTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#004131',
-  },
-  profileIcon: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
   },
   section: {
     paddingHorizontal: 20,
@@ -195,7 +217,6 @@ const styles = StyleSheet.create({
   dayLabel: {
     fontSize: 13,
     color: '#145A46',
-    bold: 30,
     marginTop: 4,
   },
   observationCard: {
@@ -270,19 +291,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#052138',
-  },
-  
-
-  navItem: {
-    alignItems: 'center',
-  },
-  navActive: {
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  navInactive: {
-    color: '#888',
-    fontSize: 13,
   },
 });

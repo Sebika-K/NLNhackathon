@@ -49,6 +49,7 @@ const mockStories = [
 
 export default function SuggestionScreen({ route }) {
   const selectedDream = route?.params?.selectedDream || 'dancing';
+  const recommendation = route?.params?.recommendation || null;
 
   return (
     <LinearGradient
@@ -69,7 +70,17 @@ export default function SuggestionScreen({ route }) {
                 vibrant. Here is how we can bring that energy into your day.
             </Text>
 
-            {mockSuggestions.map((item) => (
+            {recommendation ? (
+                <View style={styles.suggestionCard}>
+                <View style={styles.heartCircle}>
+                    <Text style={styles.heart}>♥</Text>
+                </View>
+                <View style={styles.suggestionTextWrap}>
+                    <Text style={styles.suggestionTitle}>{recommendation}</Text>
+                </View>
+                </View>
+            ) : (
+                mockSuggestions.map((item) => (
                 <TouchableOpacity key={item.id} style={styles.suggestionCard}>
                 <View style={styles.heartCircle}>
                     <Text style={styles.heart}>♥</Text>
@@ -82,7 +93,8 @@ export default function SuggestionScreen({ route }) {
 
                 <Text style={styles.arrow}>›</Text>
                 </TouchableOpacity>
-            ))}
+            ))
+            )}
 
             <Text style={styles.storyHeading}>Success Katha</Text>
             <Text style={styles.storySubheading}>
