@@ -10,9 +10,9 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-import { helpfulStories } from '../data/mockData';
 import GradientBackground from '../components/Gradient';
 import { getDashboard } from '../services/api';
+import { getHelpfulStories } from '../services/storage';
 
 const moodToEmoji = { 1: '😞', 2: '😰', 3: '🙂', 4: '😌', 5: '😄' };
 const DAY_LABELS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
@@ -45,6 +45,7 @@ export default function ReviewScreen() {
   const [checkins, setCheckins] = useState([]);
   const [dreams, setDreams] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [savedStories, setSavedStories] = useState([]);
 
   useEffect(() => {
     getDashboard()
@@ -56,6 +57,7 @@ export default function ReviewScreen() {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
+    setSavedStories(getHelpfulStories());
   }, []);
 
   const weeklyMoods = buildWeekTrail(checkins);
@@ -126,22 +128,27 @@ export default function ReviewScreen() {
 
               <View style={styles.section}>
                 <Text style={styles.sectionHeading}>Timilai helpful lageko katha</Text>
-                {helpfulStories.map((story, index) => (
-                  <View key={index} style={styles.storyCard}>
-                    <View style={styles.tagsRow}>
-                      {story.tags.map((tag, tagIndex) => (
-                        <View key={tagIndex} style={styles.tag}>
-                          <Text style={styles.tagText}>{tag}</Text>
-                        </View>
-                      ))}
-                    </View>
-                    <Text style={styles.storyTitle}>{story.title}</Text>
-                    <Text style={styles.storyPreview}>{story.preview}</Text>
-                    <TouchableOpacity>
-                      <Text style={styles.readButton}>Read her story →</Text>
-                    </TouchableOpacity>
+                {savedStories.length === 0 ? (
+                  <View style={styles.emptyCard}>
+                    <Text style={styles.emptyText}>
+                      Stories you mark "This gives me hope" will appear here.
+                    </Text>
                   </View>
-                ))}
+                ) : (
+                  savedStories.map((story, index) => (
+                    <View key={index} style={styles.storyCard}>
+                      <View style={styles.tagsRow}>
+                        {(story.tags || []).map((tag, tagIndex) => (
+                          <View key={tagIndex} style={styles.tag}>
+                            <Text style={styles.tagText}>{tag}</Text>
+                          </View>
+                        ))}
+                      </View>
+                      <Text style={styles.storyTitle}>{story.title}</Text>
+                      <Text style={styles.storyPreview}>{story.preview}</Text>
+                    </View>
+                  ))
+                )}
               </View>
             </>
           )}
@@ -291,5 +298,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#052138',
+  },
+  emptyCard: {
+    backgroundColor: '#F4F7FC',
+    borderRadius: 14,
+    padding: 18,
+    marginBottom: 12,
+  },
+  emptyText: {
+    fontSize: 14,
+    color: '#888',
+    lineHeight: 22,
+    textAlign: 'center',
   },
 });

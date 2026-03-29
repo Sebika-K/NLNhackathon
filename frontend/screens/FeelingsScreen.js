@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
+import BottomNav from '../components/BottomNav';
 
 const emotionOptions = [
   '😔 Sad',
@@ -76,6 +77,7 @@ export default function FeelingsScreen({ navigation }) {
   };
 
   return (
+    <View style={{ flex: 1 }}>
     <LinearGradient
       colors={['#92ade7', '#EEF3FB', '#F5F5F5']}
       start={{ x: 0, y: 0 }}
@@ -135,6 +137,8 @@ export default function FeelingsScreen({ navigation }) {
         </TouchableOpacity>
       </ScrollView>
     </LinearGradient>
+    <BottomNav active="Dream" />
+    </View>
   );
 }
 

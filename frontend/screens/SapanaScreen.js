@@ -12,6 +12,7 @@ import {
   Alert,
 } from 'react-native';
 import { submitCheckin, getRecommendation } from '../services/api';
+import BottomNav from '../components/BottomNav';
 
 const options = [
   '🎨 Kala',
@@ -58,6 +59,7 @@ export default function SapanaScreen({ navigation, route }) {
       navigation.navigate('Suggestion', {
         selectedDream: dream,
         recommendation: recResult.recommendation || null,
+        emotions: feelingsData.emotions || [],
       });
     } catch (err) {
       Alert.alert('Could not connect to DIDI server. Make sure backend is running.');
@@ -68,6 +70,7 @@ export default function SapanaScreen({ navigation, route }) {
   };
 
   return (
+    <View style={{ flex: 1 }}>
     <LinearGradient
       colors={['#92ade7', '#EEF3FB', '#F5F5F5']}
       start={{ x: 0, y: 0 }}
@@ -127,6 +130,8 @@ export default function SapanaScreen({ navigation, route }) {
         </Text>
       </ScrollView>
     </LinearGradient>
+    <BottomNav active="Dream" />
+    </View>
   );
 }
 

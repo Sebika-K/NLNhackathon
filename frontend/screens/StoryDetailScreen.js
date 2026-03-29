@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import BottomNav from '../components/BottomNav';
+import { addHelpfulStory } from '../services/storage';
 
 export default function StoryDetailScreen({ navigation, route }) {
   const story = route?.params?.story || {
@@ -83,8 +84,16 @@ export default function StoryDetailScreen({ navigation, route }) {
             <TouchableOpacity
               style={[styles.primaryAction, hoped && styles.primaryActionDone]}
               onPress={() => {
-                setHoped(true);
-                Alert.alert('Shukriya!', 'Glad this story gave you hope.');
+                if (!hoped) {
+                  setHoped(true);
+                  addHelpfulStory({
+                    id: story.id || story.title,
+                    title: story.title,
+                    tags: story.tags || [],
+                    preview: story.paragraphs?.[0]?.slice(0, 80) + '...' || '',
+                  });
+                  Alert.alert('Shukriya!', 'This story has been saved to your dashboard.');
+                }
               }}
             >
               <Text style={styles.primaryActionText}>

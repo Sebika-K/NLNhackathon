@@ -7,6 +7,7 @@ import checkinRouter from './routes/checkin'
 import dashboardRouter from './routes/dashboard'
 import alertRouter from './routes/alert'
 import recommendRouter from './routes/recommend'
+import storiesRouter from './routes/stories'
 
 const app = express()
 app.use(cors())
@@ -20,6 +21,7 @@ app.use('/checkin', checkinRouter)
 app.use('/dashboard', dashboardRouter)
 app.use('/alert', alertRouter)
 app.use('/recommend', recommendRouter)
+app.use('/stories', storiesRouter)
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
