@@ -8,6 +8,8 @@ import SapanaScreen from './screens/SapanaScreen';
 import SuggestionScreen from './screens/SuggestionScreen';
 import ReviewScreen from './screens/ReviewScreen';
 import CommunityScreen from './screens/CommunityScreen';
+import StoriesScreen from './screens/StoriesScreen';
+import StoryDetailScreen from './screens/StoryDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -21,6 +23,8 @@ export default function App() {
         <Stack.Screen name="Suggestion" component={SuggestionScreen} />
         <Stack.Screen name="Review" component={ReviewScreen} />
         <Stack.Screen name="Community" component={CommunityScreen} />
+        <Stack.Screen name="Stories" component={StoriesScreen} />
+        <Stack.Screen name="StoryDetail" component={StoryDetailScreen} />
 
       </Stack.Navigator>
     </NavigationContainer>
