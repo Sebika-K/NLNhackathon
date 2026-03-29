@@ -146,7 +146,7 @@ export default function ReviewScreen() {
             </>
           )}
 
-          <View style={{ height: 100 }} />
+          <View style={{ height: 40 }} />
         </ScrollView>
       </View>
     </GradientBackground>

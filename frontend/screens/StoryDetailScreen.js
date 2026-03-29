@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ScrollView,
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import BottomNav from '../components/BottomNav';
 
 export default function StoryDetailScreen({ navigation, route }) {
   const story = route?.params?.story || {
@@ -22,61 +24,86 @@ export default function StoryDetailScreen({ navigation, route }) {
       "Now, the tea tastes of jasmine and freedom. Maya isn't just a daughter-in-law anymore; she is the architect of her own morning light. Hope is a flame that survives every winter.",
   };
 
+  const [liked, setLiked] = useState(false);
+  const [hoped, setHoped] = useState(false);
+
   return (
-    <LinearGradient
-      colors={['#92ADE7', '#EEF3FB', '#F5F5F5']}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={{ flex: 1 }}
-    >
-      <View style={styles.screen}>
-        <ScrollView contentContainerStyle={styles.container}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Text style={styles.backArrow}>←</Text>
-          </TouchableOpacity>
-
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>{story.category}</Text>
-          </View>
-
-          <View style={styles.card}>
-            <Text style={styles.title}>{story.title}</Text>
-
-            <View style={styles.tagRow}>
-              {story.tags.map((tag) => (
-                <View key={tag} style={styles.tag}>
-                  <Text style={styles.tagText}>{tag}</Text>
-                </View>
-              ))}
+    <View style={{ flex: 1 }}>
+      <LinearGradient
+        colors={['#92ADE7', '#EEF3FB', '#F5F5F5']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{ flex: 1 }}
+      >
+        <View style={styles.screen}>
+          <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+            <View style={styles.topRow}>
+              <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                <Text style={styles.backArrow}>←</Text>
+              </TouchableOpacity>
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{story.category}</Text>
+              </View>
+              <View style={{ width: 40 }} />
             </View>
 
-            <View style={styles.divider} />
+            <View style={styles.card}>
+              <Text style={styles.title}>{story.title}</Text>
 
-            {story.paragraphs.map((paragraph, index) => (
-              <Text key={index} style={styles.paragraph}>
-                {paragraph}
+              <View style={styles.tagRow}>
+                {story.tags.map((tag) => (
+                  <View key={tag} style={styles.tag}>
+                    <Text style={styles.tagText}>{tag}</Text>
+                  </View>
+                ))}
+              </View>
+
+              <View style={styles.divider} />
+
+              {story.paragraphs.map((paragraph, index) => (
+                <Text key={index} style={styles.paragraph}>
+                  {paragraph}
+                </Text>
+              ))}
+
+              <Text style={styles.ending}>{story.ending}</Text>
+            </View>
+
+            <View style={{ height: 100 }} />
+          </ScrollView>
+
+          <View style={styles.bottomActions}>
+            <TouchableOpacity
+              style={[styles.iconButton, liked && styles.iconButtonActive]}
+              onPress={() => setLiked(!liked)}
+            >
+              <Text style={styles.iconText}>{liked ? '♥' : '♡'}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.primaryAction, hoped && styles.primaryActionDone]}
+              onPress={() => {
+                setHoped(true);
+                Alert.alert('Shukriya!', 'Glad this story gave you hope.');
+              }}
+            >
+              <Text style={styles.primaryActionText}>
+                {hoped ? '✓ This helped me' : '☕ This gives me hope'}
               </Text>
-            ))}
+            </TouchableOpacity>
 
-            <Text style={styles.ending}>{story.ending}</Text>
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={() => Alert.alert('Share', 'Sharing this story with someone who needs it.')}
+            >
+              <Text style={styles.iconText}>↗</Text>
+            </TouchableOpacity>
           </View>
-        </ScrollView>
-
-        <View style={styles.bottomActions}>
-          <TouchableOpacity style={styles.iconButton}>
-            <Text style={styles.iconText}>♡</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.primaryAction}>
-            <Text style={styles.primaryActionText}>☕ This gives me hope</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.iconButton}>
-            <Text style={styles.iconText}>↗</Text>
-          </TouchableOpacity>
         </View>
-      </View>
-    </LinearGradient>
+      </LinearGradient>
+
+      <BottomNav active="Stories" />
+    </View>
   );
 }
 
@@ -86,48 +113,51 @@ const styles = StyleSheet.create({
   },
   container: {
     paddingTop: 56,
-    paddingHorizontal: 24,
-    paddingBottom: 140,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  topRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
   },
   backButton: {
-    marginBottom: 14,
-    alignSelf: 'flex-start',
+    width: 40,
   },
   backArrow: {
-    fontSize: 30,
+    fontSize: 26,
     color: '#163B5C',
   },
   badge: {
-    alignSelf: 'center',
     backgroundColor: '#F3DDD9',
     borderRadius: 999,
     paddingHorizontal: 16,
     paddingVertical: 8,
-    marginBottom: 18,
   },
   badgeText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '700',
     color: '#1F3148',
     letterSpacing: 0.5,
   },
   card: {
     backgroundColor: '#F7F7F4',
-    borderRadius: 40,
-    padding: 28,
+    borderRadius: 32,
+    padding: 24,
   },
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: '700',
     color: '#004131',
-    marginBottom: 16,
-    lineHeight: 36,
+    marginBottom: 14,
+    lineHeight: 34,
   },
   tagRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,
-    marginBottom: 20,
+    marginBottom: 18,
   },
   tag: {
     borderWidth: 1,
@@ -146,56 +176,62 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: '#E5E5E5',
-    marginBottom: 20,
+    marginBottom: 18,
   },
   paragraph: {
     fontSize: 16,
-    lineHeight: 34,
+    lineHeight: 30,
     color: '#4A4A4A',
-    marginBottom: 18,
+    marginBottom: 16,
   },
   ending: {
-    fontSize: 17,
-    lineHeight: 34,
+    fontSize: 16,
+    lineHeight: 28,
     color: '#004131',
     fontWeight: '600',
     marginTop: 8,
   },
   bottomActions: {
-    position: 'absolute',
-    left: 24,
-    right: 24,
-    bottom: 24,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    backgroundColor: 'transparent',
   },
   iconButton: {
-    width: 54,
-    height: 54,
-    borderRadius: 18,
+    width: 50,
+    height: 50,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: '#8A97D1',
     backgroundColor: '#F7F7F4',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  iconButtonActive: {
+    backgroundColor: '#F3DDD9',
+    borderColor: '#E8A09A',
+  },
   iconText: {
-    fontSize: 24,
+    fontSize: 22,
     color: '#8A97D1',
   },
   primaryAction: {
     flex: 1,
-    marginHorizontal: 14,
+    marginHorizontal: 12,
     backgroundColor: '#7E99D5',
-    borderRadius: 18,
-    height: 56,
+    borderRadius: 16,
+    height: 52,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  primaryActionDone: {
+    backgroundColor: '#2E6E5C',
+  },
   primaryActionText: {
     color: '#FFFFFF',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '700',
   },
 });

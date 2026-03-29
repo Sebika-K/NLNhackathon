@@ -9,19 +9,16 @@ import {
   Image,
   TextInput,
   Switch,
+  Alert,
 } from 'react-native';
+import TopNav from '../components/TopNav';
+import BottomNav from '../components/BottomNav';
 
 const filters = ['All', 'Buhari', 'Cheli', 'Ama', 'Sasura Ghar', 'Heavy', 'Hopeful'];
+
 const emotionOptions = [
-  '😔 Sad',
-  '😰 Anxious',
-  '😶 Numb',
-  '😤 Frustrated',
-  '😞 Hopeless',
-  '😴 Exhausted',
-  '🙂 Okay',
-  '😌 Calm',
-  '😄 Happy',
+  '😔 Sad', '😰 Anxious', '😶 Numb', '😤 Frustrated',
+  '😞 Hopeless', '😴 Exhausted', '🙂 Okay', '😌 Calm', '😄 Happy',
 ];
 
 const stories = [
@@ -29,288 +26,257 @@ const stories = [
     id: 1,
     tags: ['ANXIOUS', 'BUHARI'],
     title: 'Sasural ma pehilo barsa',
-    description:
-      'Moving into a new home was terrifying at first. Every step I took felt unfamiliar and heavy...',
+    description: 'Moving into a new home was terrifying at first. Every step I took felt unfamiliar and heavy...',
+    paragraphs: [
+      'Moving into a new home was terrifying at first. Every step I took felt unfamiliar and heavy. The silence between me and my mother-in-law felt like a wall neither of us knew how to cross.',
+      'One afternoon, I decided to cook her favorite dal. I didn\'t say anything — I just placed it in front of her. She looked at me for a moment, then nodded slowly.',
+      'That small act opened something between us. We started talking. Not much at first, just small things — the weather, a recipe, a neighbour\'s story.',
+    ],
+    ending: 'Now, our kitchen smells like understanding. I am still learning, but I no longer feel alone in this home.',
   },
   {
     id: 2,
     tags: ['HOPELESS', 'CHELI'],
     title: 'Maile aafnai naam feri paare',
-    description:
-      'I was always just "Buhari" or "Mother". I had forgotten the sound of my own name...',
+    description: 'I was always just "Buhari" or "Mother". I had forgotten the sound of my own name...',
+    paragraphs: [
+      'I was always just "Buhari" or "Mother". I had forgotten the sound of my own name. For years, it felt like I existed only in relation to others — never as myself.',
+      'My daughter asked me one day what my dream was when I was young. I didn\'t have an answer. That question stayed with me for weeks.',
+      'I found an old notebook where I had written poems as a girl. Reading them felt like meeting a stranger — and recognizing her.',
+    ],
+    ending: 'I started writing again. My name is Kamala. And I am still here.',
   },
   {
     id: 3,
     tags: ['TENSE', 'AMA'],
     title: 'Ama le bujhin',
-    description:
-      'The dinner table was silent until mother reached out her hand. It was a small thing, but it changed everything...',
+    description: 'The dinner table was silent until mother reached out her hand. It was a small thing, but it changed everything...',
+    paragraphs: [
+      'The dinner table was always silent. We ate, we finished, we left. There was so much unsaid between my mother and me — years of expectation and disappointment sitting between the rice and the dal.',
+      'One evening, I came home crying from work. I didn\'t tell her why. She didn\'t ask. She just made me tea and sat beside me.',
+      'We didn\'t speak for a long time. But for the first time, the silence felt different. It felt like company.',
+    ],
+    ending: 'Ama understood more than I ever gave her credit for. Love doesn\'t always need words.',
   },
 ];
 
 export default function StoriesScreen({ navigation }) {
   const [activeTab, setActiveTab] = useState('read');
-  const [anonymous, setAnonymous] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState('All');
+  const [selectedEmotions, setSelectedEmotions] = useState([]);
+  const [selectedPerspective, setSelectedPerspective] = useState('All');
+  const [anonymous, setAnonymous] = useState(true);
+  const [storyTitle, setStoryTitle] = useState('');
+  const [storyBody, setStoryBody] = useState('');
+
+  const toggleEmotion = (e) =>
+    setSelectedEmotions((prev) =>
+      prev.includes(e) ? prev.filter((x) => x !== e) : [...prev, e]
+    );
+
+  const filteredStories =
+    selectedFilter === 'All'
+      ? stories
+      : stories.filter((s) =>
+          s.tags.some((t) => t.toLowerCase() === selectedFilter.toLowerCase())
+        );
+
+  const handleShare = () => {
+    if (!storyTitle || !storyBody) {
+      Alert.alert('Please fill in the title and your story before sharing.');
+      return;
+    }
+    Alert.alert('Shukriya!', 'Your story has been shared with the community.');
+    setStoryTitle('');
+    setStoryBody('');
+    setSelectedEmotions([]);
+    setSelectedPerspective('All');
+    setActiveTab('read');
+  };
+
   return (
-    <LinearGradient
-            colors={['#92ade7', '#EEF3FB', '#F5F5F5']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{ flex: 1 }}
-    >
-        <ScrollView contentContainerStyle={styles.container}>
-            <View style={styles.topRow}>
-                <View style={styles.brandRow}>
-                <Image
-                    source={require('../assets/didi_logo.png')}
-                    style={styles.brandImage}
+    <View style={{ flex: 1 }}>
+      <LinearGradient
+        colors={['#92ade7', '#EEF3FB', '#F5F5F5']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{ flex: 1 }}
+      >
+        <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+          <TopNav />
+
+          <Text style={styles.heading}>Stories</Text>
+          <Text style={styles.subheading}>
+            {activeTab === 'read' ? 'Hamro Katha. Hamro Shakti' : 'Share your Katha'}
+          </Text>
+
+          {/* TAB TOGGLE */}
+          <View style={styles.toggleRow}>
+            <TouchableOpacity
+              style={[styles.toggleButton, activeTab === 'read' && styles.activeToggle]}
+              onPress={() => setActiveTab('read')}
+            >
+              <Text style={[styles.toggleText, activeTab === 'read' && styles.activeToggleText]}>
+                Read Stories
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.toggleButton, activeTab === 'share' && styles.activeToggle]}
+              onPress={() => setActiveTab('share')}
+            >
+              <Text style={[styles.toggleText, activeTab === 'share' && styles.activeToggleText]}>
+                Share Yours
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {activeTab === 'read' ? (
+            <>
+              {/* FILTER PILLS */}
+              <View style={styles.filterWrap}>
+                {filters.map((filter) => (
+                  <TouchableOpacity
+                    key={filter}
+                    style={[styles.filterPill, selectedFilter === filter && styles.selectedFilterPill]}
+                    onPress={() => setSelectedFilter(filter)}
+                  >
+                    <Text style={[styles.filterText, selectedFilter === filter && styles.selectedFilterText]}>
+                      {filter}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              {/* STORY CARDS */}
+              {filteredStories.map((story, index) => (
+                <View
+                  key={story.id}
+                  style={[styles.storyCard, index === 1 && styles.storyCardAccent]}
+                >
+                  <View style={styles.tagRow}>
+                    {story.tags.map((tag) => (
+                      <View key={tag} style={styles.tag}>
+                        <Text style={styles.tagText}>{tag}</Text>
+                      </View>
+                    ))}
+                  </View>
+                  <Text style={styles.storyTitle}>{story.title}</Text>
+                  <Text style={styles.storyDescription}>{story.description}</Text>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('StoryDetail', {
+                        story: {
+                          category: 'HER KATHA',
+                          title: story.title,
+                          tags: story.tags,
+                          paragraphs: story.paragraphs,
+                          ending: story.ending,
+                        },
+                      })
+                    }
+                  >
+                    <Text style={styles.storyLink}>Read her story →</Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </>
+          ) : (
+            <>
+              <Text style={styles.formLabel}>Give your Katha a title</Text>
+              <TextInput
+                placeholder="Something meaningful..."
+                placeholderTextColor="#6E7C8F"
+                style={styles.input}
+                value={storyTitle}
+                onChangeText={setStoryTitle}
+              />
+
+              <Text style={styles.formLabel}>Write your Katha and how you overcame...</Text>
+              <TextInput
+                placeholder="Start typing here..."
+                placeholderTextColor="#6E7C8F"
+                style={styles.textArea}
+                multiline
+                textAlignVertical="top"
+                value={storyBody}
+                onChangeText={setStoryBody}
+              />
+
+              <Text style={styles.formLabel}>How do you feel about this story?</Text>
+              <View style={styles.filterWrap}>
+                {emotionOptions.map((item) => (
+                  <TouchableOpacity
+                    key={item}
+                    style={[styles.filterPill, selectedEmotions.includes(item) && styles.selectedFilterPill]}
+                    onPress={() => toggleEmotion(item)}
+                  >
+                    <Text style={[styles.filterText, selectedEmotions.includes(item) && styles.selectedFilterText]}>
+                      {item}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              <Text style={styles.formLabel}>Perspective selector</Text>
+              <View style={styles.filterWrap}>
+                {filters.map((filter) => (
+                  <TouchableOpacity
+                    key={filter}
+                    style={[styles.filterPill, selectedPerspective === filter && styles.selectedFilterPill]}
+                    onPress={() => setSelectedPerspective(filter)}
+                  >
+                    <Text style={[styles.filterText, selectedPerspective === filter && styles.selectedFilterText]}>
+                      {filter}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              <View style={styles.switchRow}>
+                <Text style={styles.switchLabel}>👁 Share anonymously</Text>
+                <Switch
+                  value={anonymous}
+                  onValueChange={setAnonymous}
+                  trackColor={{ false: '#D6DCEB', true: '#7896CD' }}
+                  thumbColor={anonymous ? '#07294D' : '#FFFFFF'}
                 />
-                <Text style={styles.brandText}>DIDI</Text>
-                </View>
+              </View>
 
-                <View style={styles.profileCircle}>
-                <Text style={styles.profileIcon}>◉</Text>
-                </View>
-            </View>
+              <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
+                <Text style={styles.shareButtonText}>Share my story</Text>
+              </TouchableOpacity>
+            </>
+          )}
 
-            <Text style={styles.heading}>Stories</Text>
-            <Text style={styles.subheading}>Hamro Katha. Hamro Shakti</Text>
-
-            <View style={styles.toggleRow}>
-                <TouchableOpacity
-                    style={[
-                    styles.toggleButton,
-                    activeTab === 'read' && styles.activeToggle,
-                    ]}
-                    onPress={() => setActiveTab('read')}
-                >
-                    <Text
-                    style={[
-                        styles.toggleText,
-                        activeTab === 'read' && styles.activeToggleText,
-                    ]}
-                    >
-                    Read Stories
-                    </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={[
-                    styles.toggleButton,
-                    activeTab === 'share' && styles.activeToggle,
-                    ]}
-                    onPress={() => setActiveTab('share')}
-                >
-                    <Text
-                    style={[
-                        styles.toggleText,
-                        activeTab === 'share' && styles.activeToggleText,
-                    ]}
-                    >
-                    Share Yours
-                    </Text>
-                </TouchableOpacity>
-            </View>
-
-            {activeTab === 'read' ? (
-                <>
-                    <View style={styles.filterWrap}>
-                    {filters.map((filter, index) => (
-                        <TouchableOpacity
-                        key={index}
-                        style={[
-                            styles.filterPill,
-                            filter === 'All' && styles.selectedFilterPill,
-                        ]}
-                        >
-                        <Text
-                            style={[
-                            styles.filterText,
-                            filter === 'All' && styles.selectedFilterText,
-                            ]}
-                        >
-                            {filter}
-                        </Text>
-                        </TouchableOpacity>
-                    ))}
-                    </View>
-
-                    {stories.map((story, index) => (
-                    <View
-                        key={story.id}
-                        style={[
-                        styles.storyCard,
-                        index === 1 && styles.storyCardAccent,
-                        ]}
-                    >
-                        <View style={styles.tagRow}>
-                        {story.tags.map((tag) => (
-                            <View key={tag} style={styles.tag}>
-                            <Text style={styles.tagText}>{tag}</Text>
-                            </View>
-                        ))}
-                        </View>
-
-                        <Text style={styles.storyTitle}>{story.title}</Text>
-                        <Text style={styles.storyDescription}>{story.description}</Text>
-
-                        <TouchableOpacity
-                          onPress={() =>
-                            navigation.navigate('StoryDetail', {
-                              story: {
-                                category: 'HER KATHA',
-                                title: story.title,
-                                tags: story.tags,
-                                paragraphs: [
-                                  story.description,
-                                  'One Tuesday morning, instead of lowering her eyes, she chose to speak clearly about her wishes.',
-                                  'Through small acts of courage, the household slowly softened.',
-                                ],
-                                ending:
-                                  'Now, hope lives quietly in her everyday life. She is no longer silent.',
-                              },
-                            })
-                           }
-                        >
-
-                        <Text style={styles.storyLink}>Read her story →</Text>
-                        </TouchableOpacity>
-                    </View>
-                    ))}
-                </>
-                ) : (
-                <>
-                    <Text style={styles.formLabel}>Give your Katha a title</Text>
-                    <TextInput
-                    placeholder="Something meaningful..."
-                    placeholderTextColor="#6E7C8F"
-                    style={styles.input}
-                    />
-
-                    <Text style={styles.formLabel}>
-                    Write your Katha and how you overcame...
-                    </Text>
-                    <TextInput
-                    placeholder="Start typing here..."
-                    placeholderTextColor="#6E7C8F"
-                    style={styles.textArea}
-                    multiline
-                    textAlignVertical="top"
-                    />
-
-                    <Text style={styles.formLabel}>How do you feel about this story?</Text>
-                    <View style={styles.filterWrap}>
-                    {emotionOptions.map((item, index) => (
-                        <TouchableOpacity
-                        key={index}
-                        style={[
-                            styles.filterPill,
-                            item === '😌 Calm' && styles.selectedFilterPill,
-                        ]}
-                        >
-                        <Text style={styles.filterText}>{item}</Text>
-                        </TouchableOpacity>
-                    ))}
-                    </View>
-
-                    <Text style={styles.formLabel}>Perspective selector</Text>
-                    <View style={styles.filterWrap}>
-                    {filters.map((filter, index) => (
-                        <TouchableOpacity
-                        key={index}
-                        style={[
-                            styles.filterPill,
-                            filter === 'All' && styles.selectedFilterPill,
-                        ]}
-                        >
-                        <Text
-                            style={[
-                            styles.filterText,
-                            filter === 'All' && styles.selectedFilterText,
-                            ]}
-                        >
-                            {filter}
-                        </Text>
-                        </TouchableOpacity>
-                    ))}
-                    </View>
-
-                    <View style={styles.switchRow}>
-                    <Text style={styles.switchLabel}>Share anonymously</Text>
-                    <Switch
-                        value={anonymous}
-                        onValueChange={setAnonymous}
-                        trackColor={{ false: '#D6DCEB', true: '#9DB3E6' }}
-                        thumbColor={anonymous ? '#07294D' : '#FFFFFF'}
-                    />
-                    </View>
-
-                    <TouchableOpacity style={styles.shareButton}>
-                    <Text style={styles.shareButtonText}>Share my story</Text>
-                    </TouchableOpacity>
-                </>
-)}
-    
+          <View style={{ height: 20 }} />
         </ScrollView>
-    </LinearGradient>
-    
+      </LinearGradient>
+
+      <BottomNav active="Stories" />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 60,
     paddingBottom: 40,
-    paddingHorizontal: 24,
-  },
-  topRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 18,
-  },
-  brandRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  brandImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 21,
-    marginRight: 10,
-  },
-  brandText: {
-    fontSize: 28,
-    color: '#51624F',
-  },
-  profileCircle: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    borderWidth: 1.5,
-    borderColor: '#234F46',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  profileIcon: {
-    fontSize: 12,
-    color: '#234F46',
+    paddingHorizontal: 20,
   },
   heading: {
     fontSize: 32,
     fontWeight: '700',
     color: '#004131',
-    marginBottom: 6,
+    marginBottom: 4,
+    marginTop: 8,
   },
   subheading: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#7896CD',
     marginBottom: 20,
   },
   toggleRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 18,
+    marginBottom: 20,
     gap: 12,
   },
   toggleButton: {
@@ -320,14 +286,14 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingVertical: 14,
     alignItems: 'center',
-    backgroundColor: '#F7F7F4',
+    backgroundColor: 'transparent',
   },
   activeToggle: {
     backgroundColor: '#07294D',
     borderColor: '#07294D',
   },
   toggleText: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
     color: '#8A97D1',
   },
@@ -338,7 +304,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,
-    marginBottom: 26,
+    marginBottom: 24,
   },
   filterPill: {
     borderWidth: 1,
@@ -350,36 +316,36 @@ const styles = StyleSheet.create({
   },
   selectedFilterPill: {
     backgroundColor: '#DCE9E3',
+    borderColor: '#2E6E5C',
   },
   filterText: {
     color: '#2E6E5C',
     fontSize: 14,
   },
   selectedFilterText: {
-    fontWeight: '600',
+    fontWeight: '700',
   },
   storyCard: {
     backgroundColor: '#F4F7FC',
-    borderRadius: 30,
-    padding: 22,
-    marginBottom: 22,
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 16,
   },
   storyCardAccent: {
-    borderLeftWidth: 6,
+    borderLeftWidth: 5,
     borderLeftColor: '#183557',
   },
   tagRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: 14,
+    gap: 8,
+    marginBottom: 12,
   },
   tag: {
     backgroundColor: '#D8DEE9',
-    borderRadius: 10,
+    borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 4,
-    marginRight: 8,
-    marginBottom: 8,
   },
   tagText: {
     fontSize: 10,
@@ -391,76 +357,75 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     color: '#132C4A',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   storyDescription: {
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: 14,
+    lineHeight: 22,
     color: '#4B5663',
-    marginBottom: 18,
+    marginBottom: 14,
   },
   storyLink: {
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: '700',
     color: '#132C4A',
   },
   formLabel: {
-  width: '100%',
-  fontSize: 16,
-  fontWeight: '700',
-  color: '#004131',
-  marginBottom: 10,
-  marginTop: 8,
-},
-input: {
-  width: '100%',
-  backgroundColor: '#F4F7FC',
-  borderRadius: 20,
-  paddingHorizontal: 18,
-  paddingVertical: 16,
-  fontSize: 16,
-  color: '#132C4A',
-  marginBottom: 20,
-},
-textArea: {
-  width: '100%',
-  minHeight: 140,
-  backgroundColor: '#F4F7FC',
-  borderRadius: 28,
-  paddingHorizontal: 18,
-  paddingVertical: 18,
-  fontSize: 16,
-  color: '#132C4A',
-  marginBottom: 22,
-},
-switchRow: {
-  width: '100%',
-  backgroundColor: '#DDE2F0',
-  borderRadius: 22,
-  paddingHorizontal: 18,
-  paddingVertical: 16,
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginTop: 8,
-  marginBottom: 24,
-},
-switchLabel: {
-  fontSize: 18,
-  fontWeight: '600',
-  color: '#132C4A',
-},
-shareButton: {
-  width: '100%',
-  backgroundColor: '#7D99D5',
-  paddingVertical: 18,
-  borderRadius: 999,
-  alignItems: 'center',
-  marginBottom: 24,
-},
-shareButtonText: {
-  color: '#FFFFFF',
-  fontSize: 20,
-  fontWeight: '700',
-},
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#004131',
+    marginBottom: 10,
+    marginTop: 6,
+  },
+  input: {
+    width: '100%',
+    backgroundColor: '#F4F7FC',
+    borderRadius: 16,
+    paddingHorizontal: 18,
+    paddingVertical: 14,
+    fontSize: 15,
+    color: '#132C4A',
+    marginBottom: 16,
+  },
+  textArea: {
+    width: '100%',
+    minHeight: 140,
+    backgroundColor: '#F4F7FC',
+    borderRadius: 20,
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+    fontSize: 15,
+    color: '#132C4A',
+    marginBottom: 20,
+  },
+  switchRow: {
+    width: '100%',
+    backgroundColor: '#DDE2F0',
+    borderRadius: 20,
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 4,
+    marginBottom: 20,
+  },
+  switchLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#132C4A',
+  },
+  shareButton: {
+    width: '100%',
+    backgroundColor: '#7D99D5',
+    paddingVertical: 18,
+    borderRadius: 999,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  shareButtonText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '700',
+  },
 });

@@ -5,6 +5,8 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
+  Platform,
+  StatusBar,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
@@ -30,36 +32,36 @@ export default function TopNav() {
   );
 }
 
+const STATUS_BAR_HEIGHT = Platform.OS === 'android' ? StatusBar.currentHeight || 24 : 54;
+
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: 12,
-    paddingBottom: 12,
+    paddingTop: STATUS_BAR_HEIGHT,
+    paddingBottom: 8,
     width: '100%',
   },
-
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    //flex: 1,
   },
   avatar: {
-    width: 64,
-    height: 54,
+    width: 48,
+    height: 40,
     borderRadius: 0,
   },
   headerTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#004131',
   },
   profileIcon: {
-    width: 26,
-    height: 26,
-    borderRadius: 18,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
   },
 });
