@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import TopNav from '../components/TopNav';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
@@ -6,27 +6,88 @@ import {
   Text,
   ScrollView,
   StyleSheet,
-  Image,
   TouchableOpacity,
-} from 'react-native'; 
+} from 'react-native';
 
-import { weeklyMoods, weeklyActivities, helpfulStories } from '../data/mockData'; //these are mock up data
+import { weeklyMoods as mockMoods, weeklyActivities as mockActivities, helpfulStories } from '../data/mockData';
 import GradientBackground from '../components/Gradient';
+import { getDashboard } from '../services/api';
+
+const SCORE_TO_EMOJI = { 1: '😞', 2: '😐', 3: '🙂', 4: '😊', 5: '😄' };
+const DAY_LABELS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+
+function buildWeekMoods(checkins) {
+  const today = new Date();
+  const week = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const dateStr = d.toISOString().split('T')[0];
+    const match = checkins.find(c => c.checked_in_at && c.checked_in_at.startsWith(dateStr));
+    week.push({
+      day: DAY_LABELS[d.getDay()],
+      emoji: match ? SCORE_TO_EMOJI[match.mood_score] ?? null : null,
+    });
+  }
+  return week;
+}
+
+function buildActivities(dreams) {
+  if (!dreams || dreams.length === 0) return mockActivities;
+  const counts = {};
+  dreams.forEach(d => {
+    if (d.hobby) counts[d.hobby] = (counts[d.hobby] || 0) + 1;
+  });
+  return Object.entries(counts).map(([k, v]) => `${k} — ${v} palta`);
+}
+
+function getDateRange() {
+  const today = new Date();
+  const start = new Date(today);
+  start.setDate(today.getDate() - 6);
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[start.getMonth()]} ${start.getDate()} — ${months[today.getMonth()]} ${today.getDate()}`;
+}
+
+function getObservation(checkins) {
+  if (!checkins || checkins.length === 0) return null;
+  const scores = checkins.map(c => c.mood_score);
+  const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+  if (avg >= 4) return 'You had a strong week. That energy matters.';
+  if (avg >= 3) return 'You had a lighter second half of the week. That matters.';
+  return 'It was a heavy week. You are still here — and that is enough.';
+}
 
 export default function ReviewScreen() {
+  const [moods, setMoods] = useState(mockMoods);
+  const [activities, setActivities] = useState(mockActivities);
+  const [observation, setObservation] = useState('You had a lighter second half of the week. That matters.');
+
+  useEffect(() => {
+    getDashboard()
+      .then(data => {
+        if (data?.data) {
+          const { checkins, dreams } = data.data;
+          if (checkins && checkins.length > 0) {
+            setMoods(buildWeekMoods(checkins));
+            setObservation(getObservation(checkins));
+          }
+          setActivities(buildActivities(dreams));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <GradientBackground>
-
       <View style={styles.container}>
-        {/* HEADER */}
         <TopNav />
 
         <ScrollView showsVerticalScrollIndicator={false}>
-          {/* WEEK REVIEW TITLE */}
           <View style={styles.section}>
             <View style={styles.titleRow}>
               <Text style={styles.weekTitle}>Week Review </Text>
-              <Text style={styles.dateRange}>March 24 — March 30</Text>
+              <Text style={styles.dateRange}>{getDateRange()}</Text>
             </View>
             <Text style={styles.subtitle}>
               Yo hapta timi kasari rahyo —{' '}
@@ -34,9 +95,8 @@ export default function ReviewScreen() {
             </Text>
           </View>
 
-          {/* MOOD TRAIL */}
           <View style={styles.moodRow}>
-            {weeklyMoods.map((item, index) => (
+            {moods.map((item, index) => (
               <View key={index} style={styles.moodItem}>
                 {item.emoji ? (
                   <View style={styles.moodCircleFilled}>
@@ -50,20 +110,17 @@ export default function ReviewScreen() {
             ))}
           </View>
 
-          {/* DIDI OBSERVATION */}
           <View style={styles.observationCard}>
             <Text style={styles.observationText}>
-              ✦ You had a lighter second half of the week.{' '}
-              <Text style={styles.bold}>That matters.</Text>
+              ✦ {observation}
             </Text>
           </View>
 
-          {/* TIMRO KADAM */}
           <View style={styles.section}>
             <Text style={styles.sectionHeading}>Timro kadam</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <View style={styles.chipsRow}>
-                {weeklyActivities.map((activity, index) => (
+                {activities.map((activity, index) => (
                   <View key={index} style={styles.chip}>
                     <Text style={styles.chipText}>{activity}</Text>
                   </View>
@@ -72,7 +129,6 @@ export default function ReviewScreen() {
             </ScrollView>
           </View>
 
-          {/* HELPFUL STORIES */}
           <View style={styles.section}>
             <Text style={styles.sectionHeading}>Timilai helpful lageko katha</Text>
             {helpfulStories.map((story, index) => (
@@ -95,8 +151,6 @@ export default function ReviewScreen() {
 
           <View style={{ height: 100 }} />
         </ScrollView>
-
-      
       </View>
     </GradientBackground>
   );
@@ -105,35 +159,6 @@ export default function ReviewScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //backgroundColor: '#FFFFFF',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 56,
-    paddingBottom: 12,
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-  },
-  headerTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#004131',
-  },
-  profileIcon: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
   },
   section: {
     paddingHorizontal: 20,
@@ -195,7 +220,6 @@ const styles = StyleSheet.create({
   dayLabel: {
     fontSize: 13,
     color: '#145A46',
-    bold: 30,
     marginTop: 4,
   },
   observationCard: {
@@ -270,19 +294,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#052138',
-  },
-  
-
-  navItem: {
-    alignItems: 'center',
-  },
-  navActive: {
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  navInactive: {
-    color: '#888',
-    fontSize: 13,
   },
 });

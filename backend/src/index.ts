@@ -11,6 +11,7 @@ import recommendRouter from './routes/recommend'
 const app = express()
 app.use(cors())
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
 app.get('/', (req, res) => {
   res.json({ message: 'DIDI backend is running!' })
@@ -21,7 +22,13 @@ app.use('/dashboard', dashboardRouter)
 app.use('/alert', alertRouter)
 app.use('/recommend', recommendRouter)
 
-const PORT = process.env.PORT || 3000
-app.listen(PORT, () => {
-  console.log(`DIDI server running on port ${PORT}`)
-})
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3000
+  app.listen(PORT, () => {
+    console.log(`DIDI server running on port ${PORT}`)
+  })
+}
+
+// For Vercel serverless
+export default app

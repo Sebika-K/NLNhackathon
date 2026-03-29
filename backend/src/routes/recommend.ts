@@ -4,6 +4,9 @@ import { geminiModel } from '../lib/claude'
 const router = Router()
 
 router.post('/', async (req: Request, res: Response) => {
+  if (!req.body) {
+    return res.status(400).json({ success: false, error: 'Missing request body' })
+  }
   const { mood_score, dream_space } = req.body
 
   const prompt = `You are DIDI, a warm and supportive mental health companion for Nepalese women. 

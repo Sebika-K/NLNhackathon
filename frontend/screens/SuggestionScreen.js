@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import TopNav from '../components/TopNav';
 import {
@@ -7,21 +7,9 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Image,
+  ActivityIndicator,
 } from 'react-native';
-
-const mockSuggestions = [
-  {
-    id: 1,
-    title: 'Lok dohori sunera nach',
-    category: 'MOVEMENT',
-  },
-  {
-    id: 2,
-    title: 'Maan pareko geet ma walk',
-    category: 'MOVEMENT',
-  },
-];
+import { getRecommendation } from '../services/api';
 
 const mockStories = [
   {
@@ -47,119 +35,94 @@ const mockStories = [
   },
 ];
 
-export default function SuggestionScreen({ route }) {
-  const selectedDream = route?.params?.selectedDream || 'dancing';
+export default function SuggestionScreen({ route, navigation }) {
+  const selectedDream = route?.params?.selectedDream || 'your dream';
+  const mood_score = route?.params?.mood_score ?? 3;
+
+  const [recommendation, setRecommendation] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getRecommendation({ mood_score, dream_space: selectedDream })
+      .then(data => {
+        if (data?.recommendation) {
+          setRecommendation(data.recommendation);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <LinearGradient
-        colors={['#92ade7', '#EEF3FB', '#F5F5F5']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{ flex: 1 }}
-        >
-        <ScrollView contentContainerStyle={styles.container}>
-            <TopNav />
+      colors={['#92ade7', '#EEF3FB', '#F5F5F5']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={{ flex: 1 }}
+    >
+      <TopNav />
 
-            <Text style={styles.kicker}>PERSONALIZED FOR YOU</Text>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.kicker}>PERSONALIZED FOR YOU</Text>
 
-            <Text style={styles.heading}>DIDI’s Suggestion</Text>
+        <Text style={styles.heading}>DIDI's Suggestion</Text>
 
-            <Text style={styles.description}>
-                I noticed your dream about <Text style={styles.highlight}>{selectedDream}</Text> felt
-                vibrant. Here is how we can bring that energy into your day.
-            </Text>
+        {loading ? (
+          <View style={styles.loadingBox}>
+            <ActivityIndicator color="#7896CD" size="large" />
+            <Text style={styles.loadingText}>DIDI is thinking...</Text>
+          </View>
+        ) : recommendation ? (
+          <View style={styles.recommendationCard}>
+            <Text style={styles.recommendationText}>{recommendation}</Text>
+          </View>
+        ) : (
+          <Text style={styles.description}>
+            I noticed your dream about{' '}
+            <Text style={styles.highlight}>{selectedDream}</Text> felt vibrant.
+            Here is how we can bring that energy into your day.
+          </Text>
+        )}
 
-            {mockSuggestions.map((item) => (
-                <TouchableOpacity key={item.id} style={styles.suggestionCard}>
-                <View style={styles.heartCircle}>
-                    <Text style={styles.heart}>♥</Text>
+        <Text style={styles.storyHeading}>Success Katha</Text>
+        <Text style={styles.storySubheading}>
+          You are not alone in what you feel.
+        </Text>
+
+        {mockStories.map((story, index) => (
+          <View
+            key={story.id}
+            style={[
+              styles.storyCard,
+              index === 1 && styles.storyCardAccent,
+            ]}
+          >
+            <View style={styles.tagRow}>
+              {story.tags.map(tag => (
+                <View key={tag} style={styles.tag}>
+                  <Text style={styles.tagText}>{tag}</Text>
                 </View>
+              ))}
+            </View>
 
-                <View style={styles.suggestionTextWrap}>
-                    <Text style={styles.suggestionTitle}>{item.title}</Text>
-                    <Text style={styles.suggestionCategory}>{item.category}</Text>
-                </View>
+            <Text style={styles.storyTitle}>{story.title}</Text>
+            <Text style={styles.storyDescription}>{story.description}</Text>
 
-                <Text style={styles.arrow}>›</Text>
-                </TouchableOpacity>
-            ))}
-
-            <Text style={styles.storyHeading}>Success Katha</Text>
-            <Text style={styles.storySubheading}>
-                You are not alone in what you feel.
-            </Text>
-
-            {mockStories.map((story, index) => (
-                <View
-                key={story.id}
-                style={[
-                    styles.storyCard,
-                    index === 1 && styles.storyCardAccent,
-                ]}
-                >
-                <View style={styles.tagRow}>
-                    {story.tags.map((tag) => (
-                    <View key={tag} style={styles.tag}>
-                        <Text style={styles.tagText}>{tag}</Text>
-                    </View>
-                    ))}
-                </View>
-
-                <Text style={styles.storyTitle}>{story.title}</Text>
-                <Text style={styles.storyDescription}>{story.description}</Text>
-
-                <TouchableOpacity>
-                    <Text style={styles.storyLink}>Read her story →</Text>
-                </TouchableOpacity>
-                </View>
+            <TouchableOpacity onPress={() => navigation.navigate('Stories')}>
+              <Text style={styles.storyLink}>Read her story →</Text>
+            </TouchableOpacity>
+          </View>
         ))}
-        </ScrollView>
-
-
+      </ScrollView>
     </LinearGradient>
-    
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 60,
+    paddingTop: 16,
     paddingBottom: 40,
     paddingHorizontal: 24,
-  },
-  topRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 18,
-  },
-  brandRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  brandImage: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    marginRight: 10,
-  },
-  brandText: {
-    fontSize: 28,
-    color: '#004131',
-  },
-  profileCircle: {
-    width: 57,
-    height: 54,
-    borderRadius: 15,
-    borderWidth: 1.5,
-    borderColor: 'transparent',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  profileIcon: {
-    width: 23,
-    height: 23,
-    borderRadius: 18,
   },
   kicker: {
     fontSize: 12,
@@ -183,45 +146,28 @@ const styles = StyleSheet.create({
   highlight: {
     color: '#8A97D1',
   },
-  suggestionCard: {
-    borderWidth: 1,
-    borderColor: '#052138',
-    backgroundColor: '#F4F7FC',
-    borderRadius: 0,
-    padding: 16,
-    flexDirection: 'row',
+  loadingBox: {
     alignItems: 'center',
-    marginBottom: 16,
+    paddingVertical: 32,
+    marginBottom: 24,
   },
-  heartCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#F3E8E8',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 14,
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: '#7896CD',
   },
-  heart: {
-    color: '#132C4A',
-    fontSize: 20,
+  recommendationCard: {
+    backgroundColor: '#EFF1F8',
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 24,
+    borderLeftWidth: 4,
+    borderLeftColor: '#7896CD',
   },
-  suggestionTextWrap: {
-    flex: 1,
-  },
-  suggestionTitle: {
-    fontSize: 18,
-    color: '#132C4A',
-    marginBottom: 2,
-  },
-  suggestionCategory: {
-    fontSize: 12,
-    color: '#9EAFE9',
-    letterSpacing: 0.8,
-  },
-  arrow: {
-    fontSize: 26,
-    color: '#6E7080',
+  recommendationText: {
+    fontSize: 17,
+    lineHeight: 28,
+    color: '#2D4169',
   },
   storyHeading: {
     marginTop: 8,

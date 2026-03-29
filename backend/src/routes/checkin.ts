@@ -4,6 +4,9 @@ import { supabase } from '../lib/supabase'
 const router = Router()
 
 router.post('/', async (req: Request, res: Response) => {
+  if (!req.body) {
+    return res.status(400).json({ success: false, error: 'Missing request body' })
+  }
   const { user_id, mood_score, pain_points, hobby, goal, category } = req.body
 
   // Save the check-in
