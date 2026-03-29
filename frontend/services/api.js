@@ -1,5 +1,5 @@
-const BASE_URL = 'http://localhost:3000';
-const USER_ID = 'demo_user';
+const BASE_URL = 'https://nl-nhackathon.vercel.app';
+const USER_ID = 'a0000000-0000-0000-0000-000000000001';
 
 export const submitCheckin = async ({ mood_score, pain_points, hobby, goal, category }) => {
   const response = await fetch(`${BASE_URL}/checkin`, {

@@ -39,20 +39,22 @@ export default function SapanaScreen({ navigation, route }) {
     const chosenHobby = hobby || selectedHobby;
     const dream = customGoal || chosenHobby || '';
     setLoading(true);
-    try {
-      await submitCheckin({
-        mood_score: feelingsData.mood_score,
-        pain_points: feelingsData.pain_points,
-        hobby: chosenHobby,
-        goal: customGoal,
-        category: chosenHobby ? 'hobby' : 'custom',
-      });
 
+    // Try to save checkin — don't block on failure
+    submitCheckin({
+      mood_score: feelingsData.mood_score,
+      pain_points: feelingsData.pain_points,
+      hobby: chosenHobby,
+      goal: customGoal,
+      category: chosenHobby ? 'hobby' : 'custom',
+    }).catch(() => {});
+
+    // Get AI recommendation independently
+    try {
       const recResult = await getRecommendation({
         mood_score: feelingsData.mood_score,
         dream_space: dream,
       });
-
       navigation.navigate('Suggestion', {
         selectedDream: dream,
         recommendation: recResult.recommendation || null,
